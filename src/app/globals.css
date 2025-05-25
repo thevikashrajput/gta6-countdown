@@ -1,21 +1,194 @@
+/* app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* --- FONTS --- */
+@font-face {
+  font-family: "MyFont";
+  src: url("/assets/font.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: 'Pricedown';
+  src: url("/assets/fonts/Pricedown Bl.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
+/* --- BASE STYLES --- */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: theme('fontFamily.sans');
+  background: linear-gradient( /* Keep your existing gradient */
+    -45deg,
+    #ff7e5f,
+    #feb47b,
+    #20002c,
+    #cbb4d4,
+    #23a6d5,
+    #23d5ab
+  );
+  background-size: 400% 400%;
+  animation: theme('animation.gradientBG');
+  color: white;
+  overflow-x: hidden;
+  cursor: url("/assets/gta-cursor.png"), auto;
+  min-height: 100vh;
+  position: relative; /* For noise overlay positioning */
 }
+
+/* VHS Overlay - already good */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/assets/vhs-overlay.png") repeat;
+  opacity: 0.03; /* Reduced slightly, can be adjusted */
+  pointer-events: none;
+  z-index: 9998; /* Adjusted z-index */
+}
+
+/* Subtle Noise Overlay for entire page */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/assets/textures/noise-overlay.png") repeat; /* NEW */
+  opacity: 0.05; /* Subtle noise */
+  pointer-events: none;
+  z-index: 9999; /* Below VHS, or adjust as needed */
+}
+
+
+/* --- CUSTOM COMPONENTS / UTILITIES --- */
+.glass-effect {
+  background: rgba(10, 5, 20, 0.55); /* Slightly more opaque */
+  backdrop-filter: blur(10px); /* Adjusted blur */
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid theme('colors.glass-border');
+  border-radius: 0.5rem; /* Slightly less rounded, more GTA-like - rounded-lg */
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), /* Enhanced shadow */
+              inset 0 1px 1px rgba(255, 255, 255, 0.05); /* Subtle inner highlight */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative; /* For potential inner noise */
+  overflow: hidden; /* If adding pseudo-elements for noise inside */
+}
+
+/* Optional: Add noise inside glass elements */
+.glass-effect::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("/assets/textures/noise-overlay.png") repeat;
+  opacity: 0.02;
+  pointer-events: none;
+  z-index: -1; /* Behind content */
+}
+
+.neon-text-effect {
+  font-family: theme('fontFamily.pricedown') !important;
+  color: theme('colors.gta-cyan') !important;
+  text-shadow: 0 0 4px theme('colors.gta-cyan'),   /* Reduced spread slightly for sharpness */
+               0 0 8px theme('colors.gta-cyan'),
+               0 0 15px theme('colors.gta-pink'),
+               0 0 25px theme('colors.gta-pink'),
+               0 0 35px theme('colors.gta-pink') !important;
+  letter-spacing: 0.05em; /* Optional: slightly more spacing for Pricedown */
+}
+
+/* NEW: Subtle Neon Effect for things like Planck Time */
+.neon-text-effect-subtle {
+  color: theme('colors.gta-pink');
+  text-shadow: 0 0 3px theme('colors.gta-pink', #FF00C180), /* Pink with alpha */
+               0 0 6px theme('colors.gta-pink', #FF00C140);  /* Pink with more alpha */
+}
+
+
+.countdown-timer-text {
+  font-family: theme('fontFamily.pricedown');
+  color: #fff;
+  text-shadow: 0 0 3px theme('colors.gta-cyan', rgba(0, 255, 213, 0.8)), /* Stronger primary color */
+               0 0 6px theme('colors.gta-pink', rgba(255, 0, 193, 0.6)), /* Stronger secondary color */
+               1px 1px 2px rgba(0,0,0,0.3); /* Subtle drop shadow for depth */
+  letter-spacing: 0.025em; /* For Pricedown readability */
+}
+
+.countdown-label-text {
+  font-family: theme('fontFamily.sans');
+  color: rgba(255, 255, 255, 0.9); /* Slightly brighter */
+  letter-spacing: 0.075em; /* More spacing for clarity */
+  font-size: 0.75rem; /* Tailwind: text-xs */
+  font-weight: 500; /* Medium weight */
+  text-transform: uppercase;
+}
+
+.btn-gta {
+  @apply text-white rounded-md /* More angular */
+         border-2 border-white/30 hover:border-white
+         transition-all duration-200 ease-in-out transform hover:scale-[1.03] /* CORRECTED */
+         disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none
+         focus:outline-none focus:ring-2 focus:ring-gta-pink focus:ring-opacity-75; /* Focus state */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6); /* Stronger text shadow */
+  /* background-color: rgba(0,0,0,0.3); Optional base dark bg */
+}
+/* Specific button style for primary action (rumor button) */
+.btn-gta-primary {
+  @apply font-pricedown text-2xl md:text-3xl py-3 px-8 /* Adjusted padding */
+         bg-gradient-to-r from-gta-purple via-gta-pink to-gta-orange
+         hover:from-purple-600 hover:via-pink-500 hover:to-orange-500 /* Darken on hover */
+         shadow-button-glow hover:shadow-button-glow-hover
+         /* animate-pulseGlow - will be controlled by JS for loading */
+         rounded-lg; /* Slightly more rounded than base btn-gta */
+}
+
+
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.2); /* Thinner border */
+  border-radius: 50%;
+  border-top-color: theme('colors.gta-pink'); /* Use theme color */
+  width: 1.75rem; /* Slightly larger */
+  height: 1.75rem;
+  animation: theme('animation.spin') 0.8s linear infinite; /* Faster spin */
+  margin: 0.625rem auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.message-box { /* For popups */
+  @apply glass-effect fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 md:p-8 text-center z-[1100] shadow-xl;
+  min-width: 300px;
+  max-width: 90vw;
+}
+.message-box.flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* NEW: Glitch effect for text appearing - class name was .glitch-text in globals.css but used animate-glitch in page.js. Standardizing to animate-glitch for keyframes */
+/* If you want a utility class .glitch-text: */
+.glitch-text {
+  animation: theme('animation.glitch') 0.6s linear forwards;
+}
+
+/* Keyframes for flash and marquee used in page.js */
+@keyframes flash {
+  0%, 100% { color: white; text-shadow: 0 0 3px var(--tw-shadow-color-cyan, #00FFD5), 0 0 6px var(--tw-shadow-color-pink, #FF00C1); }
+  50% { color: #00FFD5; text-shadow: 0 0 5px #fff, 0 0 10px #00FFD5; }
+}
+.animate-flash {
+  animation: flash 0.3s ease-out;
+}
+/* Marquee animation is defined in tailwind.config.js and applied with .animate-marquee */
